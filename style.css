@@ -1,0 +1,70 @@
+:root { --bg-color: #ffffff; }
+
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-color);
+    transition: background-color 0.4s ease;
+    margin: 0; padding: 20px;
+    display: flex; flex-direction: column; align-items: center;
+}
+
+#cookie-counter {
+    background: #fff; padding: 10px 20px;
+    border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    font-size: 1.2rem; font-weight: bold;
+    position: sticky; top: 10px; z-index: 10;
+}
+
+.screen {
+    width: 100%; max-width: 400px; margin-top: 50px;
+    display: flex; flex-direction: column; align-items: center;
+}
+
+.hidden { display: none !important; }
+
+/* Теми */
+.theme-1, .theme-5, .theme-6 { --bg-color: #fff176; }
+.theme-2 { --bg-color: #a5d6a7; }
+.theme-3 { --bg-color: #ce93d8; }
+.theme-4 { --bg-color: #ef9a9a; }
+
+.portrait {
+    width: 180px; height: 180px;
+    border-radius: 50%; border: 5px solid #fff;
+    background-size: cover; background-position: center;
+    background-color: #ddd; margin-bottom: 20px;
+}
+
+input[type="number"] {
+    width: 80%; padding: 15px; font-size: 2rem;
+    text-align: center; border: 2px solid #ccc;
+    border-radius: 10px; margin-bottom: 20px;
+}
+
+.btn-main { background: #333; color: white; border: none; padding: 15px 30px; border-radius: 10px; font-size: 1.1rem; width: 100%; }
+.btn-alt { background: transparent; border: 2px solid #333; padding: 12px; margin-top: 10px; border-radius: 10px; width: 100%; }
+.btn-cookie { background: #ff9800; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; margin-bottom: 10px; width: 100%; }
+
+#result-content { background: rgba(255,255,255,0.8); padding: 20px; border-radius: 15px; margin-bottom: 20px; line-height: 1.5; }
+
+#cookie-counter {
+    background: #fff;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    cursor: pointer; /* Указатель при наведении */
+    user-select: none;
+    transition: transform 0.1s ease, background 0.2s;
+}
+
+#cookie-counter:active {
+    transform: scale(0.95); /* Эффект нажатия */
+    background: #fdf2e9;
+}
+
+.hint {
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+}
