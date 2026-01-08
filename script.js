@@ -77,9 +77,17 @@ function showResult() {
   showScreen("screen-result");
 }
 
+// Add these lines to your applyTheme(firstDigit) function in script.js
+
 function applyTheme(firstDigit) {
   document.body.className = `theme-${firstDigit}`;
   const portrait = document.getElementById("portrait-box");
+  const charInfo = document.getElementById("char-info");
+  const nameEl = document.getElementById("char-name");
+  const abilityLabelEl = document.getElementById("label-snacks-text"); // Label placeholder
+  const abilityValueEl = document.getElementById("char-ability-value");
+  const abilityTextEl = document.getElementById("label-ability-text");
+
   const heroes = {
     1: "velma.png",
     2: "shaggy.png",
@@ -88,11 +96,23 @@ function applyTheme(firstDigit) {
     5: "fred.png",
     6: "fred.png",
   };
+
   if (heroes[firstDigit]) {
+    // Set Portrait
     portrait.style.backgroundImage = `url('images/${heroes[firstDigit]}')`;
     portrait.classList.remove("hidden");
+
+    // Set Character Data from Translations
+    const charData = UI[`char${firstDigit}`];
+    if (charData) {
+      nameEl.innerText = charData.name;
+      abilityTextEl.innerText = UI.abilityLabel;
+      abilityValueEl.innerText = charData.ability;
+      charInfo.classList.remove("hidden");
+    }
   } else {
     portrait.classList.add("hidden");
+    charInfo.classList.add("hidden");
   }
 }
 
