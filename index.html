@@ -23,7 +23,22 @@
             <input type="number" id="code-input" pattern="\d*" maxlength="4">
         </section>
 
+        <div id="lang-switcher" class="lang-switcher">
+            <button onclick="changeLanguage('ru')" class="lang-btn">RU</button>
+            <button onclick="changeLanguage('uk')" class="lang-btn">UK</button>
+            <button onclick="changeLanguage('en')" class="lang-btn">EN</button>
+        </div>
+
         <div id="dynamic-content">
+            <h2 id="location-display" class="hidden"></h2>
+
+            <section id="screen-result" class="screen hidden">
+                <div class="result-box">
+                    <p id="result-text"></p>
+                    <p id="result-action"><strong></strong></p>
+                </div>
+            </section>
+
             <div id="portrait-box" class="portrait hidden"></div>
 
             <div id="char-info" class="hidden">
@@ -33,19 +48,10 @@
                 </div>
             </div>
             
-            <h2 id="location-display" class="hidden"></h2>
-
             <section id="screen-confirm" class="screen hidden">
                 <div class="btn-row">
                     <button class="btn-main" id="btn-yes" onclick="showResult()"></button>
                     <button class="btn-alt" id="btn-no" onclick="clearInput()"></button>
-                </div>
-            </section>
-
-            <section id="screen-result" class="screen hidden">
-                <div class="result-box">
-                    <p id="result-text"></p>
-                    <p id="result-action"><strong></strong></p>
                 </div>
             </section>
 

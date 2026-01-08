@@ -10,7 +10,7 @@ const translations = {
     yesBtn: "Да",
     noBtn: "Нет",
     errorTitle: "Локация не найдена",
-    errorHint: "Нажми на счетчик закусок выше, если нужно",
+    errorHint: "Нажми на счетчик закусок выше",
     resetConfirm:
       "Вы уверены, что хотите начать заново? Счетчик закусок вернется к 20.",
     noSnacksAlert: "Закуски закончились! Нажми ⟳ чтобы сбросить.",
@@ -31,7 +31,7 @@ const translations = {
     yesBtn: "Так",
     noBtn: "Ні",
     errorTitle: "Локацію не знайдено",
-    errorHint: "Натисни на лічильник закусок вище, якщо потрібно",
+    errorHint: "Натисни на лічильник закусок вище",
     resetConfirm:
       "Ви впевнені, що хочете почати заново? Лічильник закусок повернеться до 20.",
     noSnacksAlert: "Закуски закінчилися! Натисни ⟳ щоб скинути.",
@@ -67,5 +67,5 @@ const translations = {
   },
 };
 
-const currentLang = "ru";
-const UI = translations[currentLang];
+let currentLang = localStorage.getItem("game_lang") || "ru"; // Try to load saved language or use Russian
+let UI = translations[currentLang];

@@ -34,6 +34,7 @@ async function initData() {
       skipEmptyLines: true,
       complete: (results) => {
         gameData = results.data;
+        console.log("Data loaded successfully");
       },
     });
   } catch (err) {
@@ -41,14 +42,56 @@ async function initData() {
   }
 }
 
+/**
+ * Changes the application language
+ * @param {string} lang - 'ru', 'uk', or 'en'
+ */
+function changeLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem("game_lang", lang); // Remember choice
+  UI = translations[currentLang]; // Update current UI object
+
+  applyLocalization(); // Refresh all text on screen
+  updateActiveLangBtn(); // Visual feedback
+}
+
+function updateActiveLangBtn() {
+  document.querySelectorAll(".lang-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.innerText.toLowerCase() === currentLang);
+  });
+}
+
+// Update applyLocalization to include all UI elements
+function applyLocalization() {
+  document.title = UI.appTitle;
+  document.getElementById("label-snacks").innerText = UI.snacksLabel;
+  document.getElementById("code-input").placeholder = UI.inputPlaceholder;
+  document.getElementById("btn-yes").innerText = UI.yesBtn;
+  document.getElementById("btn-no").innerText = UI.noBtn;
+  document.getElementById("error-title").innerText = UI.errorTitle;
+  document.getElementById("error-hint").innerText = UI.errorHint;
+  updateActiveLangBtn();
+}
+
+/**
+ * Updated handleLiveInput with switcher visibility logic
+ */
 function handleLiveInput(val) {
+  const langSwitcher = document.getElementById("lang-switcher");
   hideAllScreens();
   document.getElementById("location-display").classList.add("hidden");
+
+  // Toggle switcher visibility
   if (val.length === 0) {
+    langSwitcher.classList.remove("hidden");
     document.body.className = "";
     document.getElementById("portrait-box").classList.add("hidden");
+    document.getElementById("char-info").classList.add("hidden");
     return;
+  } else {
+    langSwitcher.classList.add("hidden");
   }
+
   applyTheme(val[0]);
   if (val.length === 4) {
     processCode(val);
@@ -77,14 +120,11 @@ function showResult() {
   showScreen("screen-result");
 }
 
-// Add these lines to your applyTheme(firstDigit) function in script.js
-
 function applyTheme(firstDigit) {
   document.body.className = `theme-${firstDigit}`;
   const portrait = document.getElementById("portrait-box");
   const charInfo = document.getElementById("char-info");
   const nameEl = document.getElementById("char-name");
-  const abilityLabelEl = document.getElementById("label-snacks-text"); // Label placeholder
   const abilityValueEl = document.getElementById("char-ability-value");
   const abilityTextEl = document.getElementById("label-ability-text");
 
@@ -98,11 +138,9 @@ function applyTheme(firstDigit) {
   };
 
   if (heroes[firstDigit]) {
-    // Set Portrait
     portrait.style.backgroundImage = `url('images/${heroes[firstDigit]}')`;
     portrait.classList.remove("hidden");
 
-    // Set Character Data from Translations
     const charData = UI[`char${firstDigit}`];
     if (charData) {
       nameEl.innerText = charData.name;
@@ -147,17 +185,16 @@ function updateCounterDisplay() {
 function showScreen(id) {
   document.getElementById(id).classList.remove("hidden");
 }
+
 function hideAllScreens() {
   const screens = ["screen-confirm", "screen-result", "screen-error"];
   screens.forEach((s) => document.getElementById(s).classList.add("hidden"));
 }
 
-// Service Worker Registration
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
       .register("sw.js")
-      .then((reg) => console.log("SW registered!", reg))
       .catch((err) => console.log("SW error:", err));
   });
 }

@@ -46,7 +46,32 @@ input[type="number"] {
     background-size: cover; background-position: center; 
     filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.5));
 }
-#location-display { margin: 10px 0; text-align: center; font-size: 1.5rem; }
+
+#location-display { 
+    margin: 10px 0; 
+    text-align: center; 
+    font-size: 1.8rem;
+    width: 100%;
+}
+
+.screen h2 {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#error-title {
+    color: #c0392b;
+    text-align: center;
+}
+
+.hint { 
+    font-size: 0.9rem; 
+    color: #666; 
+    font-style: italic; 
+    text-align: center;
+    width: 100%;
+}
 
 /* --- Button Layout --- */
 .btn-row { 
@@ -87,6 +112,36 @@ input[type="number"] {
     display: inline-block;
     font-size: 0.9rem;
     border: 1px solid rgba(0,0,0,0.1);
+}
+
+.lang-switcher {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
+    transition: opacity 0.3s ease;
+}
+
+.lang-btn {
+    background: #fff;
+    border: 2px solid #333;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.lang-btn:hover {
+    background: #f0f0f0;
+}
+
+/* Style for active language could be added here */
+.lang-btn.active {
+    background: #333;
+    color: #fff;
 }
 
 .hidden { display: none !important; }
