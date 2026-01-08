@@ -1,16 +1,22 @@
-const CACHE_NAME = "mystery-v1";
+const CACHE_NAME = "scooby-mansion-v1";
 const ASSETS = [
-  "./",
-  "./index.html",
-  "./style.css",
-  "./script.js",
-  "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js",
+  "index.html",
+  "style.css",
+  "script.js",
+  "translations.js",
+  "manifest.json",
 ];
 
-self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+  );
 });
 
-self.addEventListener("fetch", (e) => {
-  e.respondWith(caches.match(e.request).then((res) => res || fetch(e.request)));
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
+  );
 });

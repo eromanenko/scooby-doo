@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Scooby-Doo: Escape from the Haunted Mansion</title>
+    <title id="page-title">Scooby-Doo Escape</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#333333">
@@ -12,24 +12,27 @@
 <body>
 
     <header class="game-header">
-        <div id="cookie-counter" onclick="eatCookie()" title="Нажми, чтобы съесть закуску">
-            🍪 Закуски: <span id="counter-val">20</span>
+        <div id="cookie-counter" onclick="eatCookie()">
+            <span id="label-snacks"></span>:&nbsp;<span id="counter-val">20</span>
         </div>
-        <button class="btn-reset" onclick="confirmReset()">🔄</button>
+        <button class="btn-reset" onclick="confirmReset()">&#8635;</button>
     </header>
 
     <main id="app">
         <section class="input-section">
-            <input type="number" id="code-input" pattern="\d*" placeholder="Введите код" maxlength="4">
+            <input type="number" id="code-input" pattern="\d*" maxlength="4">
         </section>
 
         <div id="dynamic-content">
             <div id="portrait-box" class="portrait hidden"></div>
+            
+            <h2 id="location-display" class="hidden"></h2>
 
             <section id="screen-confirm" class="screen hidden">
-                <h2 id="confirm-location">Локация</h2>
-                <button class="btn-main" onclick="showResult()">Да</button>
-                <button class="btn-alt" onclick="clearInput()">Нет</button>
+                <div class="btn-row">
+                    <button class="btn-main" id="btn-yes" onclick="showResult()"></button>
+                    <button class="btn-alt" id="btn-no" onclick="clearInput()"></button>
+                </div>
             </section>
 
             <section id="screen-result" class="screen hidden">
@@ -37,15 +40,16 @@
                     <p id="result-text"></p>
                     <p id="result-action"><strong></strong></p>
                 </div>
-                </section>
+            </section>
 
             <section id="screen-error" class="screen hidden">
-                <h2 class="error-text">Локация не найдена</h2>
-                <p class="hint">Нажми на счетчик закусок выше, если нужно</p>
+                <h2 id="error-title"></h2>
+                <p class="hint" id="error-hint"></p>
             </section>
         </div>
     </main>
 
+    <script src="translations.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
