@@ -1,5 +1,9 @@
-const SHEETS_URL =
+const SHEETS_URL_RU =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjCozO38RG54KVsVeO8coCz-a1Z3T44jLJcB_rZFN7R8YzDhCr_D0qWlcm80UVr8hHE4VpzWlcwCeG/pub?gid=0&single=true&output=csv";
+const SHEETS_URL_UK =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjCozO38RG54KVsVeO8coCz-a1Z3T44jLJcB_rZFN7R8YzDhCr_D0qWlcm80UVr8hHE4VpzWlcwCeG/pub?gid=1657108925&single=true&output=csv";
+const SHEETS_URL_EN =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjCozO38RG54KVsVeO8coCz-a1Z3T44jLJcB_rZFN7R8YzDhCr_D0qWlcm80UVr8hHE4VpzWlcwCeG/pub?gid=1657108925&single=true&output=csv";
 
 let gameData = [];
 let counter = localStorage.getItem("mansion_cookies")
@@ -27,7 +31,7 @@ function applyLocalization() {
 
 async function initData() {
   try {
-    const response = await fetch(SHEETS_URL);
+    const response = await fetch(SHEETS_URL_RU);
     const csvText = await response.text();
     Papa.parse(csvText, {
       header: true,

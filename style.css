@@ -93,6 +93,10 @@ input[type="number"] {
     width: 100%; box-sizing: border-box;
 }
 
+#result-text {
+    white-space: pre-wrap;
+}
+
 #char-info {
     text-align: center;
     margin-bottom: 15px;
