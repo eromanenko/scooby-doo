@@ -1,9 +1,13 @@
-const SHEETS_URL_RU =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjCozO38RG54KVsVeO8coCz-a1Z3T44jLJcB_rZFN7R8YzDhCr_D0qWlcm80UVr8hHE4VpzWlcwCeG/pub?gid=0&single=true&output=csv";
-const SHEETS_URL_UK =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjCozO38RG54KVsVeO8coCz-a1Z3T44jLJcB_rZFN7R8YzDhCr_D0qWlcm80UVr8hHE4VpzWlcwCeG/pub?gid=1657108925&single=true&output=csv";
-const SHEETS_URL_EN =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjCozO38RG54KVsVeO8coCz-a1Z3T44jLJcB_rZFN7R8YzDhCr_D0qWlcm80UVr8hHE4VpzWlcwCeG/pub?gid=1657108925&single=true&output=csv";
+/**
+ * Scooby-Doo: Escape from the Haunted Mansion
+ * Companion Web App Logic with Offline Support and i18n
+ */
+
+const SHEETS_URLS = {
+  ru: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjCozO38RG54KVsVeO8coCz-a1Z3T44jLJcB_rZFN7R8YzDhCr_D0qWlcm80UVr8hHE4VpzWlcwCeG/pub?gid=0&single=true&output=csv",
+  uk: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjCozO38RG54KVsVeO8coCz-a1Z3T44jLJcB_rZFN7R8YzDhCr_D0qWlcm80UVr8hHE4VpzWlcwCeG/pub?gid=1657108925&single=true&output=csv",
+  en: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjCozO38RG54KVsVeO8coCz-a1Z3T44jLJcB_rZFN7R8YzDhCr_D0qWlcm80UVr8hHE4VpzWlcwCeG/pub?gid=1657108925&single=true&output=csv",
+};
 
 let gameData = [];
 let counter = localStorage.getItem("mansion_cookies")
@@ -14,49 +18,58 @@ let currentItem = null;
 document.addEventListener("DOMContentLoaded", () => {
   applyLocalization();
   updateCounterDisplay();
-  initData();
+  initData(currentLang); // Initialize data for the current language
+
   const input = document.getElementById("code-input");
   input.addEventListener("input", (e) => handleLiveInput(e.target.value));
 });
 
-function applyLocalization() {
-  document.title = UI.appTitle;
-  document.getElementById("label-snacks").innerText = UI.snacksLabel;
-  document.getElementById("code-input").placeholder = UI.inputPlaceholder;
-  document.getElementById("btn-yes").innerText = UI.yesBtn;
-  document.getElementById("btn-no").innerText = UI.noBtn;
-  document.getElementById("error-title").innerText = UI.errorTitle;
-  document.getElementById("error-hint").innerText = UI.errorHint;
-}
-
-async function initData() {
+/**
+ * Fetches data from network and caches it, or falls back to localStorage
+ * @param {string} lang
+ */
+async function initData(lang) {
+  const cacheKey = `mansion_data_${lang}`;
   try {
-    const response = await fetch(SHEETS_URL_RU);
+    const url = SHEETS_URLS[lang] || SHEETS_URLS.ru;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Network request failed");
+
     const csvText = await response.text();
     Papa.parse(csvText, {
       header: true,
       skipEmptyLines: true,
       complete: (results) => {
         gameData = results.data;
-        console.log("Data loaded successfully");
+        localStorage.setItem(cacheKey, JSON.stringify(gameData)); // Save to cache
+        console.log(`Data for [${lang}] loaded from network and cached.`);
+        refreshCurrentView();
       },
     });
   } catch (err) {
-    console.error(err);
+    console.warn("Using offline cache for language:", lang);
+    const cachedData = localStorage.getItem(cacheKey);
+    if (cachedData) {
+      gameData = JSON.parse(cachedData);
+      refreshCurrentView();
+    } else {
+      console.error("No internet and no cache found for this language.");
+    }
   }
 }
 
 /**
- * Changes the application language
- * @param {string} lang - 'ru', 'uk', or 'en'
+ * Switches the language and re-initializes data
+ * @param {string} lang
  */
 function changeLanguage(lang) {
   currentLang = lang;
-  localStorage.setItem("game_lang", lang); // Remember choice
-  UI = translations[currentLang]; // Update current UI object
+  localStorage.setItem("game_lang", lang);
+  UI = translations[currentLang]; // Update UI object from translations.js
 
-  applyLocalization(); // Refresh all text on screen
-  updateActiveLangBtn(); // Visual feedback
+  applyLocalization();
+  updateActiveLangBtn();
+  initData(lang);
 }
 
 function updateActiveLangBtn() {
@@ -65,7 +78,6 @@ function updateActiveLangBtn() {
   });
 }
 
-// Update applyLocalization to include all UI elements
 function applyLocalization() {
   document.title = UI.appTitle;
   document.getElementById("label-snacks").innerText = UI.snacksLabel;
@@ -74,18 +86,22 @@ function applyLocalization() {
   document.getElementById("btn-no").innerText = UI.noBtn;
   document.getElementById("error-title").innerText = UI.errorTitle;
   document.getElementById("error-hint").innerText = UI.errorHint;
+
+  const abilityLabelText = document.getElementById("label-ability-text");
+  if (abilityLabelText) abilityLabelText.innerText = UI.abilityLabel;
+
   updateActiveLangBtn();
 }
 
 /**
- * Updated handleLiveInput with switcher visibility logic
+ * Handles UI logic during live code entry
  */
 function handleLiveInput(val) {
   const langSwitcher = document.getElementById("lang-switcher");
   hideAllScreens();
   document.getElementById("location-display").classList.add("hidden");
 
-  // Toggle switcher visibility
+  // Show language switcher only when input is empty
   if (val.length === 0) {
     langSwitcher.classList.remove("hidden");
     document.body.className = "";
@@ -97,6 +113,7 @@ function handleLiveInput(val) {
   }
 
   applyTheme(val[0]);
+
   if (val.length === 4) {
     processCode(val);
   } else if (val.length > 4) {
@@ -186,6 +203,18 @@ function updateCounterDisplay() {
   document.getElementById("counter-val").innerText = counter;
 }
 
+function refreshCurrentView() {
+  const currentCode = document.getElementById("code-input").value;
+  if (currentCode.length === 4) {
+    processCode(currentCode);
+    if (
+      !document.getElementById("screen-result").classList.contains("hidden")
+    ) {
+      showResult();
+    }
+  }
+}
+
 function showScreen(id) {
   document.getElementById(id).classList.remove("hidden");
 }
@@ -195,6 +224,9 @@ function hideAllScreens() {
   screens.forEach((s) => document.getElementById(s).classList.add("hidden"));
 }
 
+/**
+ * Service Worker Registration for PWA
+ */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
