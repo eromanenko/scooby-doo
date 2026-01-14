@@ -3,6 +3,8 @@
  * Companion Web App Logic with Offline Support and i18n
  */
 
+const MAX_SNACKS = 20;
+
 const SHEETS_URLS = {
   ru: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjCozO38RG54KVsVeO8coCz-a1Z3T44jLJcB_rZFN7R8YzDhCr_D0qWlcm80UVr8hHE4VpzWlcwCeG/pub?gid=0&single=true&output=csv",
   uk: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSjCozO38RG54KVsVeO8coCz-a1Z3T44jLJcB_rZFN7R8YzDhCr_D0qWlcm80UVr8hHE4VpzWlcwCeG/pub?gid=1657108925&single=true&output=csv",
@@ -12,13 +14,13 @@ const SHEETS_URLS = {
 let gameData = [];
 let counter = localStorage.getItem("mansion_cookies")
   ? parseInt(localStorage.getItem("mansion_cookies"))
-  : 20;
+  : MAX_SNACKS; // Initialize with constant
 let currentItem = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   applyLocalization();
   updateCounterDisplay();
-  initData(currentLang); // Initialize data for the current language
+  initData(currentLang);
 
   const input = document.getElementById("code-input");
   input.addEventListener("input", (e) => handleLiveInput(e.target.value));
@@ -41,19 +43,15 @@ async function initData(lang) {
       skipEmptyLines: true,
       complete: (results) => {
         gameData = results.data;
-        localStorage.setItem(cacheKey, JSON.stringify(gameData)); // Save to cache
-        console.log(`Data for [${lang}] loaded from network and cached.`);
+        localStorage.setItem(cacheKey, JSON.stringify(gameData));
         refreshCurrentView();
       },
     });
   } catch (err) {
-    console.warn("Using offline cache for language:", lang);
     const cachedData = localStorage.getItem(cacheKey);
     if (cachedData) {
       gameData = JSON.parse(cachedData);
       refreshCurrentView();
-    } else {
-      console.error("No internet and no cache found for this language.");
     }
   }
 }
@@ -65,7 +63,7 @@ async function initData(lang) {
 function changeLanguage(lang) {
   currentLang = lang;
   localStorage.setItem("game_lang", lang);
-  UI = translations[currentLang]; // Update UI object from translations.js
+  UI = translations[currentLang]; //
 
   applyLocalization();
   updateActiveLangBtn();
@@ -93,15 +91,11 @@ function applyLocalization() {
   updateActiveLangBtn();
 }
 
-/**
- * Handles UI logic during live code entry
- */
 function handleLiveInput(val) {
   const langSwitcher = document.getElementById("lang-switcher");
   hideAllScreens();
   document.getElementById("location-display").classList.add("hidden");
 
-  // Show language switcher only when input is empty
   if (val.length === 0) {
     langSwitcher.classList.remove("hidden");
     document.body.className = "";
@@ -187,7 +181,7 @@ function eatCookie() {
 
 function confirmReset() {
   if (confirm(UI.resetConfirm)) {
-    counter = 20;
+    counter = MAX_SNACKS;
     localStorage.setItem("mansion_cookies", counter);
     updateCounterDisplay();
     clearInput();
@@ -199,8 +193,21 @@ function clearInput() {
   handleLiveInput("");
 }
 
+/**
+ * Updates UI and manages reset button visibility
+ */
 function updateCounterDisplay() {
-  document.getElementById("counter-val").innerText = counter;
+  const resetBtn = document.querySelector(".btn-reset");
+  const counterValEl = document.getElementById("counter-val");
+
+  counterValEl.innerText = counter;
+
+  // Show reset button only if current counter is less than max
+  if (counter < MAX_SNACKS) {
+    resetBtn.classList.remove("hidden");
+  } else {
+    resetBtn.classList.add("hidden");
+  }
 }
 
 function refreshCurrentView() {
@@ -225,8 +232,16 @@ function hideAllScreens() {
 }
 
 /**
- * Service Worker Registration for PWA
+ * Auto-refresh logic when Service Worker updates
  */
+let refreshing = false;
+navigator.serviceWorker.addEventListener("controllerchange", () => {
+  if (!refreshing) {
+    window.location.reload();
+    refreshing = true;
+  }
+});
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
